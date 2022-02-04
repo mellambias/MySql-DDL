@@ -1,0 +1,4 @@
+DROP DATABASE ejercicio;
+CREATE DATABASE  IF NOT EXISTS ejercicio
+CHARACTER SET utf8
+COLLATE utf8_general_ci;

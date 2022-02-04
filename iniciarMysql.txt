@@ -1,0 +1,17 @@
+mysql -h localhost -u root -p
+
+user: root
+Pas: daw123
+
+mysql -h localhost -u mllambias -p
+user: mllambias
+pas: d4*****l
+
+mostrar bases de datos
+show databases;
+
+Seleccionar:
+use nombre_base_datos;
+
+Ver las tablas:
+show tables;

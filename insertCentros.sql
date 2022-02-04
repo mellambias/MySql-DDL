@@ -1,0 +1,4 @@
+INSERT INTO centros (numce,nomce,dirce)
+VALUES 
+(10,	"SEDE CENTRAL",	"C/ ATOCHA, 820, MADRID"),
+(20,	"RELACIÓN CON CLIENTES",	"C/ ATOCHA, 405, MADRID");
