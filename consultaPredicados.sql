@@ -228,7 +228,7 @@ WHERE nomem LIKE "________"
 ORDER BY nomem;
 
 /*
-Obtener por orden alfabético los nombres y el presupuesto
+3. Obtener por orden alfabético los nombres y el presupuesto
  de los departamentos que incluyen la palabra “SECTOR”. 
  La consulta la deberás mostrar como la imagen.
 */
@@ -238,5 +238,138 @@ FROM departamentos
 WHERE nomde LIKE "%SECTOR%"
 ORDER BY nomde;
 
+-- Práctica 7: Consultas con Predicados IN
 /*
+1. Obtener por orden alfabético los nombres de los empleados cuya extensión telefónica es 250 o 750.
 */
+SELECT nomem, extel
+FROM empleados
+WHERE extel IN (250,750)
+ORDER BY nomem;
+
+/*
+2. Obtener por orden alfabético los nombres de los empleados que trabajan 
+en el mismo departamento que PILAR o DOROTEA.
+*/
+
+SELECT nomem
+FROM empleados
+WHERE numde IN (SELECT numde FROM empleados WHERE nomem IN ( "PILAR" ,"DOROTEA"))
+ORDER BY nomem;
+
+/*
+3. Obtener por orden alfabético los nombres de los departamentos cuyo director
+ es el mismo que el del departamento: DIRECC.COMERCIAL o el del departamento: 
+ PERSONAL Mostrar la consulta como :
+ Nombres Departamentos          Identificador de su director
+------------------------------ ----------------------------
+SECTOR INDUSTRIAL              180
+DIRECC.COMERCIAL               180
+PERSONAL                       150
+ORGANIZACIÓN                   150
+*/
+SELECT nomde as "Nombres Departamentos", direc as "Identificador de su director"
+FROM departamentos
+WHERE direc IN (SELECT direc FROM departamentos WHERE nomde IN ("DIRECC.COMERCIAL", "PERSONAL"))
+ORDER BY nomde;
+
+--Práctica 8: Consultas con Predicados EXISTS
+/*
+1.Obtener los nombres de los centros de trabajo si hay alguno que esté en la calle ATOCHA.
+*/
+SELECT nomce
+FROM centros
+WHERE EXISTS (SELECT * FROM centros WHERE dirce LIKE "%ATOCHA%")
+ORDER BY nomce;
+
+/*
+2.Obtener los nombres y el salario de los empleados del departamento 100
+ si en él hay alguno que gane más de 1300 €.
+*/
+
+SELECT nomem, salar
+FROM empleados
+WHERE 
+numde=100
+AND
+EXISTS (SELECT * FROM empleados WHERE numde=100 AND salar > 1300)
+ORDER BY nomem;
+
+-- Práctica 10: Consultas con Fechas
+/*
+1. Obtener por orden alfabético, los nombres y fechas de nacimiento
+ de los empleados que cumplen años en el mes de noviembre.
+*/
+SELECT nomem, date_Format(fecna,"%d/%m/%Y") AS nacimiento
+FROM empleados
+WHERE  MONTH(fecna) = 11
+ORDER BY nomem;
+
+/*
+2. Obtener los nombres de los empleados que cumplen años en el día de hoy.
+*/
+SELECT nomem, fecna
+FROM empleados
+WHERE 
+DAY(fecna)=DAY(now())
+AND
+MONTH(fecna) = MONTH(now())
+ORDER BY nomem;
+
+/*
+10. Obtener los empleados y su mes de incorporación
+ siempre que esté entre los meses de Enero y Junio (ambos inclusive) 
+ y el mes de nacimiento coincida en dicho mes.
+*/
+SELECT nomem, MONTHNAME(fecin)
+FROM empleados
+WHERE
+month(fecin) BETWEEN 1 AND 6
+AND
+month(fecin) = month(fecna)
+ORDER BY nomem;
+-- 3
+SELECT TIMESTAMPDIFF(year,min(fecna),NOW()) as edad, min(fecna)
+from empleados
+WHERE numde=110;
+
+--Práctica 12: Agrupamiento de filas. GROUP BY
+/*
+1. Hallar cuántos empleados hay en cada departamento.
+*/
+SELECT numde as depertamento, count(*) as empleados
+FROM empleados
+GROUP BY numde;
+
+/*
+2.Hallar para cada departamento el salario medio, el mínimo y el máximo.
+*/
+SELECT numde, 
+round(sum(salar)/count(*),2) as "salario medio",
+min(salar) as "salario mínimo",
+max(salar) as "salario máximo"
+FROM empleados
+GROUP BY numde;
+
+/*
+5.Hallar el salario medio y la edad media en años cumplidos 
+para cada grupo de empleados del mismo departamento y con igual comisión.
+*/
+SELECT numde, 
+COMIS,
+round(avg(salar),2) as "salario medio",
+AVG(TIMESTAMPDIFF(year,fecna,NOW())) as EdadMedia
+FROM empleados
+GROUP BY numde, COMIS;
+
+-- Práctica 13: Agrupamiento de filas. CLÁUSULA HAVING
+
+/*
+1. Hallar el número de empleados que usan la misma extensión telefónica. 
+Solamente se desea mostrar aquellos grupos que tienen más de 1 empleado.
+*/
+
+SELECT extel, count(numem)
+FROM empleados
+GROUP BY extel
+HAVING count(numen) > 1;
