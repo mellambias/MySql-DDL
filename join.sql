@@ -70,3 +70,10 @@ on p.codigo_fabricante = f.codigo
 group by f.nombre
 
 --3 Lista los nombres de los fabricantes cuyos productos tienen un precio medio mayor o igual a 150€.
+
+-- Lista el nombre de cada fabricante con el nombre y el precio de su producto más caro.
+SELECT p.nombre,p.precio,f.nombre
+from  producto p INNER JOIN fabricante f
+on f.codigo = p.codigo_fabricante
+and
+p.precio = (SELECT max(p.precio) from producto p where p.codigo_fabricante = f.codigo)
